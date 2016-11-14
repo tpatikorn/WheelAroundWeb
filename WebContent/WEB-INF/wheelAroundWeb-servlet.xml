@@ -1,0 +1,24 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+   http://www.springframework.org/schema/beans     
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+   http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+   <context:component-scan base-package="com.wheelAround" />
+   
+   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+      <property name="prefix" value="/WEB-INF/pages/" />
+      <property name="suffix" value=".jsp" />
+   </bean>
+   
+   <bean id="dataSource" destroy-method="close" class="oracle.jdbc.pool.OracleDataSource">
+		<property name="dataSourceName" value="dataSource"/>
+		<property name="URL" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+		<property name="user" value="neeraj"/>
+		<property name="password" value="neeraj"/>
+	</bean>
+ 
+</beans>
