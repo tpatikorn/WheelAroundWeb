@@ -67,9 +67,16 @@ ul { left: 44.5%; top: 49.5%; }
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Login Page</title>
 <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/pepper-grinder/jquery-ui.css" media="screen" rel="stylesheet" type="text/css">
-	
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script>
+<link
+	href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css"
+	rel="stylesheet" type="text/css">	
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js" type="text/javascript"></script>
+
+<script type="text/javascript"
+	src="<c:url value="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js" />"></script>
+<script type="text/javascript"
+	src="<c:url value="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js" />"></script>
 
 <script type="text/javascript">
 
@@ -755,44 +762,39 @@ $.Widget.prototype = {
 
  })( jQuery );
 
+  function getTime()
+  {
+      var date_obj = new Date();
+      var date_obj_hours = date_obj.getHours();
+      var date_obj_mins = date_obj.getMinutes();
+      var date_obj_second = date_obj.getSeconds();
+
+      var date_obj_time = "'"+date_obj_hours+":"+date_obj_mins+":"+date_obj_second+"'";
+      return date_obj_time;
+  }
+  
   $(function()
 		{
-			$("form").form();
-		});
+			//$("form").form();
+			
+			var table;
+var table1;			
+			var options = 	{
+        "order": [[1, 'asc']],
+        "paging":   false,
+        "bFilter": false 
+	}
+	
+				table = $('#example').dataTable(options);
+				table1 = $('#example1').dataTable(options);
+				$("#datepicker1").datepicker( "option", "dateFormat", "mm-dd-yyyy"+getTime()+"" );
+				$("#datepicker2").datepicker( "option", "dateFormat", "mm-dd-yyyy"+getTime()+"" );
+			});
 	</script>
 	
 </head>
 <body>
-<h1>Welcome ${loggedInUser} to Wheel Around</h1>
-<div id="container">
-		<h1>Wheel Around Rent Page</h1>
-		 <form:form id="loginForm" method="post" action="availableVehicles" modelAttribute="loginBean">
-			
-			<c:forEach items="${loginBean.vTypeBean}" var="vTypeBean" varStatus="status">
-			<table>
-			<tr>
-				<td><form:checkbox value="false" path="vTypeBean[${status.index}].typeName" /><c:out value="${vTypeBean.getTypeName() }" /> </td>
-				<td style="display:none;"><form:checkbox value="${vTypeBean.getTypePrice() }" path="vTypeBean[${status.index}].typePrice" /> <c:out value="${vTypeBean.getTypePrice() }" /> </td>
-				<td style="display:none;"><form:checkbox value="${vTypeBean.getTypeId() }" path="vTypeBean[${status.index}].typeId" /> <c:out value="${vTypeBean.getTypeId() }" /> </td>
-			</tr>
-			</table>
-			</c:forEach>
-			
-			<p>
-				<form:label path="zipCode" for="zipCode">Enter Zip Code Of Your Location</form:label>
-				 <form:input id="zipCode" name="zipCode" path="zipCode" />
-			</p>
-			
-			<p>
-				<form:label path="distance" for="distance">Radius (In Miles)</form:label>
-				 <form:input id="distance" name="distance" path="distance" />
-			</p>
-			
-				<p align="center">
-				 <input type="submit" value="Submit" />
-			</p>
-		
-		</form:form>
-	</div>
+<h5>The total amount due for this rent is <c:out value="${fullPrice}" />$ .Please proceed to your selected garage.</h5>
+<h5>Vehicle Activation Code for this vehicle is <c:out value="${keyCode}" />.Please use this activation code to start using your vehicle after payment at the garage.</h5>
 </body>
 </html>

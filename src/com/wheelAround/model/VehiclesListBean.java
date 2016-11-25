@@ -7,6 +7,14 @@ public class VehiclesListBean {
 	private String garageLocation;
 	private String basePrice;
 	private String keysForVehicles;
+	private boolean checkBoxForVehicle = false;
+	
+	public boolean isCheckBoxForVehicle() {
+		return checkBoxForVehicle;
+	}
+	public void setCheckBoxForVehicle(boolean checkBoxForVehicle) {
+		this.checkBoxForVehicle = checkBoxForVehicle;
+	}
 	public String getModelName() {
 		return modelName;
 	}

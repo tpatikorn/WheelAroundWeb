@@ -72,6 +72,8 @@ public ModelAndView executeLogin(HttpServletRequest request, HttpServletResponse
 			loginBean.setvTypeBean(vType);
 			
 			model = new ModelAndView("vehicle_rent", "loginBean", loginBean);
+			request.getSession().setAttribute("credentials", loginBean.getCid());
+			model.addObject("credentials", loginBean.getCid());
 		}
 		else
 		{

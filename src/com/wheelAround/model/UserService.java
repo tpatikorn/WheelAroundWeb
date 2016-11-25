@@ -18,5 +18,10 @@ public interface UserService
 	public boolean registerNewUser(RegistrationBean regValues) throws SQLException;
 	public Map<String,String> getListOfAvailableVehicleTypes() throws SQLException;
 	public Map<String,String> getMapOfAllPossibleVehicleForGivenZipAndDistance(LoginBean bean);
-	public List<String> getFeatureList() throws SQLException;
+	
+
+	public List<FeatureList> getFeatureList(String vid) throws SQLException;
+	public double calculateFinalAmount(List<String> fids,String typeID) throws SQLException;
+
+	public String reserveVehicleForCustomer(String cid, String vid, String startDate, String endDate, double amountPerHour) throws SQLException;
 }

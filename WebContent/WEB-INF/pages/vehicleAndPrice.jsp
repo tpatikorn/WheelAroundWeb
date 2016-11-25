@@ -801,63 +801,36 @@ var table1;
 				<table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
 			<thead>
 				<tr>
+					<th width="10%" style="text-align:center">
+                                     CheckBox
+                    </th>
 					<th align="left">Model Name</th>
-					<th align="left">Model Type</th>
 					<th align="left">Garage Name</th>
 					<th align="left">Garage Address</th>
 					<th align="left">Base Price</th>
 					<th align="left" style="display:none">Keys For Vehicles</th>
 				</tr>
 			</thead>
+			<tbody>
 			<c:forEach items="${loginBean.vAndPriceListBean}" var="vAndPriceListBean" varStatus="status">
-			<tbody>
+			
 			<tr>
-				<td align="left"><form:checkbox value="${vAndPriceListBean.getModelName() }" path="vAndPriceListBean[${status.index}].modelName" /><c:out value="${vAndPriceListBean.getModelName() }" /> </td>
-				<td align="left"><form:label value="${vAndPriceListBean.getModelType() }" path="vAndPriceListBean[${status.index}].modelType" /> <c:out value="${vAndPriceListBean.getModelType() }" /> </td>
-				<td align="left"><form:label value="${vAndPriceListBean.getGarageName() }" path="vAndPriceListBean[${status.index}].garageName" /> <c:out value="${vAndPriceListBean.getGarageName() }" /> </td>
-				<td align="left"><form:label value="${vAndPriceListBean.getGarageLocation() }" path="vAndPriceListBean[${status.index}].garageLocation" /> <c:out value="${vAndPriceListBean.getGarageLocation() }" /> </td>
-				<td align="left"><form:label value="${vAndPriceListBean.getBasePrice() }" path="vAndPriceListBean[${status.index}].basePrice" /> <c:out value="${vAndPriceListBean.getBasePrice() }" /> </td>
-				<td align="left" style="display:none"><form:label value="${vAndPriceListBean.getKeysForVehicles() }" path="vAndPriceListBean[${status.index}].keysForVehicles" /> <c:out value="${vAndPriceListBean.getKeysForVehicles() }" /> </td>
+				<td style="text-align:center"><form:checkbox value="${vAndPriceListBean.isCheckBoxForVehicle() }" path="vAndPriceListBean[${status.index}].checkBoxForVehicle" /></td>
+				<td align="left"><c:out value="${vAndPriceListBean.getModelName() }" /> <form:hidden  path="vAndPriceListBean[${status.index}].modelName" /></td>
+				<td align="left"> <c:out value="${vAndPriceListBean.getGarageName() }" /> <form:hidden  path="vAndPriceListBean[${status.index}].garageName" /></td>
+				<td align="left"> <c:out value="${vAndPriceListBean.getGarageLocation() }" /> <form:hidden  path="vAndPriceListBean[${status.index}].garageLocation" /></td>
+				<td align="left"><c:out value="${vAndPriceListBean.getBasePrice() }" /> <form:hidden  path="vAndPriceListBean[${status.index}].basePrice" /> </td>
+				<td align="left" style="display:none"><c:out value="${vAndPriceListBean.getKeysForVehicles() }" /> <form:hidden path="vAndPriceListBean[${status.index}].keysForVehicles" /> </td>
 			</tr>
 			
-			</tbody>
+			
 			</c:forEach>
+			</tbody>
 			</table>
 			</div>
 			
-			<div class="tablediv">
-				<table id="example1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-			<thead>
-				<tr>
-					<th align="left">Feature Name</th>
-					<th align="left">Feature Price</th>
-					<th align="left" style="display:none">Feature ID</th>
-				</tr>
-			</thead>
-			
-			<c:forEach items="${loginBean.featureList}" var="featureList" varStatus="status">
-			<tbody>
-			
-			<tr>
-				<td align="left"><form:checkbox value="${featureList.getFeatureName() }" path="featureList[${status.index}].featureName" /><c:out value="${featureList.getFeatureName()  }" /> </td>
-				<td align="left"><form:label value="${featureList.getFeaturePrice() }" path="featureList[${status.index}].featurePrice" /> <c:out value="${featureList.getFeaturePrice() }" /> </td>
-				<td align="left" style="display:none"><form:label value="${featureList.getFeatureId() }" path="featureList[${status.index}].featureId" /> <c:out value="${featureList.getFeatureId()  }" /> </td>
-			</tr>
-			</tbody>
-			</c:forEach>
-			</table>
-			</div>
-			
-			
-			
-			<p>
-			<form:label path="startDate" for="startDate">Reserving from:</form:label>
-			<form:input id="datepicker1" name="startDate" path="startDate" />
-			</p>
-			
-			<p>
-			<form:label path="endDate" for="endDate">Reserving Upto:</form:label>
-			<form:input id="datepicker2" name="endDate" path="endDate" />
+				<p align="center">
+				 <input type="submit" value="Submit" />
 			</p>
 			
 			</form:form>

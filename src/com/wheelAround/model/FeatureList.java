@@ -5,6 +5,14 @@ public class FeatureList {
 	private String featureName;
 	private String featurePrice;
 	private String featureId;
+	private boolean checkBoxForVehicle = false;
+	
+	public boolean isCheckBoxForVehicle() {
+		return checkBoxForVehicle;
+	}
+	public void setCheckBoxForVehicle(boolean checkBoxForVehicle) {
+		this.checkBoxForVehicle = checkBoxForVehicle;
+	}
 	
 	public String getFeatureName() {
 		return featureName;

@@ -1,16 +1,14 @@
 package com.wheelAround.model.dao.impl;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.security.MessageDigest;
 import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,13 +19,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.wheelAround.mapper.FeatureMapper;
+import com.wheelAround.mapper.SQLQUERYCONSTANTS;
 import com.wheelAround.mapper.VehicleMapper;
-import com.wheelAround.mapper.VehicleTypeMapper;
+import com.wheelAround.model.FeatureList;
 import com.wheelAround.model.VehicleTpeListBean;
-import com.wheelAround.model.VehicleTypes;
 import com.wheelAround.model.Vehicles;
 import com.wheelAround.model.dao.RegistrationBean;
 import com.wheelAround.model.dao.UserDao;
+
+import oracle.sql.ARRAY;
+import oracle.sql.ArrayDescriptor;
 
 
 
@@ -51,7 +53,7 @@ public class UserDaoImpl implements UserDao {
 	
 	public boolean newCustomerRegistration(RegistrationBean regBean) throws SQLException{
 		
-		callStmt = dataSource.getConnection().prepareCall("{call REGISTER_NEW_CUSTOMER (?,?,?,?,?,?,?,?)}");
+		callStmt = dataSource.getConnection().prepareCall(SQLQUERYCONSTANTS.REGISTER_NEW_CUSTOMER);
 		callStmt.setString(1, regBean.getFname());
 		callStmt.setString(2, regBean.getLname());
 		callStmt.setString(3, regBean.getEmail());
@@ -68,6 +70,28 @@ public class UserDaoImpl implements UserDao {
 		callStmt.execute();
 		return true;
 		
+		
+	}
+	
+	@Override
+	public double calculateFinalAmount(List<String> features,String typeID) throws SQLException{
+	
+		Connection con = dataSource.getConnection();
+		ArrayDescriptor des = ArrayDescriptor.createDescriptor(SQLQUERYCONSTANTS.VEH_FEA_PRICE_VALUES, con);
+		String[] fea = features.toArray(new String[features.size()]);
+		ARRAY array_to_pass = new ARRAY(des,con,fea);
+		
+		callStmt = dataSource.getConnection().prepareCall(SQLQUERYCONSTANTS.CAL_FULL_PRICE);
+		callStmt.setArray(2, array_to_pass);
+		callStmt.setInt(3, features.size());
+		callStmt.setString(4, typeID);
+		callStmt.registerOutParameter(1, Types.NUMERIC);
+		callStmt.execute();
+		
+		double results = callStmt.getFloat(1);
+		results =Double.parseDouble(new DecimalFormat("##.#").format(results));
+		
+		return results;
 		
 	}
 	
@@ -98,7 +122,7 @@ public class UserDaoImpl implements UserDao {
 		
 		
 		NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	    String sql = "select * from VEHICLES where GARAGE_ID in (:garageIds) and TYPE_ID in (:typeIds)";
+	    String sql = SQLQUERYCONSTANTS.VEHICLE_SELECTION;
 	    
 	    Map<String, List<String>> fullMap = new HashMap<String, List<String>>();
 	    fullMap.put("garageIds", garageIds);
@@ -107,7 +131,7 @@ public class UserDaoImpl implements UserDao {
 	    List<Vehicles> result = jdbcTemplate.query(sql, fullMap, new VehicleMapper());
 	   
 	    for(Vehicles v : result){
-	    	String finalValues = v.getModelName() + "~~" + mapping2.get(v.getTypeId()) + "~~" + mapping.get(v.getGarageId());
+	    	String finalValues = v.getModelName() + "~~" + mapping2.get(v.getTypeId())+ "~~" +mapping.get(v.getGarageId());
 	    	finalValuesMap.put(v.getVID()+"@@"+v.getGarageId()+"@@"+v.getTypeId(), finalValues);
 	    	
 	    }
@@ -119,20 +143,8 @@ public class UserDaoImpl implements UserDao {
 	
 	private List<String> getGarageIdsForAvailableDistanceandZip(String zipCode, int distance) {
 		try {
-			String s            = new String();
-	        StringBuffer sb = new StringBuffer();
-	        List<String> availableGarageId = new ArrayList<>();	
-	        File file = new File("C:/Neeraj/Projects/WAWorkspace/wheelAroundWeb/src/resources/SQL/EUCLEDIAN_DISTANCE_CALCULATOR_QUERY.sql");
-			FileReader fr = new FileReader(file);
-			BufferedReader br = new BufferedReader(fr);
-			while ((s = br.readLine()) != null) {
-				sb.append(s);
-			}
-			br.close();
-			String selectSQL = "SELECT g.garage_id, g.dist_in_km, g.ADDRESS, g.dist_in_miles, g.GARAGE_NAME, g.OWNED_BY FROM ( SELECT g.*, sqrt(power((g.LATTITUDE - z.lat) * (110.574),2) + power((g.longitude - z.lng) * "
-					+ "(111.320 * cos(g.LATTITUDE)),2)) AS dist_in_km, 0.621371*sqrt(power((g.LATTITUDE - z.lat) * (110.574),2) + "
-					+ "power((g.longitude - z.lng) * (111.320 * cos(g.LATTITUDE)),2)) AS dist_in_miles FROM GARAGE_LOCATIONS g, (SELECT z.LATTITUDE AS lat,z.LONGITUDE AS lng FROM ZIP_CODE_MAPPING z WHERE z.Zip_CODE = ? ) z )"
-					+ "g WHERE dist_in_miles < ?";
+			List<String> availableGarageId = new ArrayList<String>();	
+			String selectSQL = SQLQUERYCONSTANTS.EUCLEDIAN_DIS_CAL;
 			PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(selectSQL);
 			preparedStatement.setString(1, zipCode);
 			preparedStatement.setInt(2, distance);
@@ -161,7 +173,7 @@ public class UserDaoImpl implements UserDao {
 
 	public String isValidUser(String username, String password) throws Exception
 	{
-		callStmt = dataSource.getConnection().prepareCall("{?=call VALIDATECUSTOMER (?,?)}");
+		callStmt = dataSource.getConnection().prepareCall(SQLQUERYCONSTANTS.VALIDATE_CUSTOMER);
 		callStmt.setString(2, username);
 		String hashedPwd= hashGenerateCIDAndPasswordForUser(password);
 		callStmt.setString(3, hashedPwd);
@@ -181,7 +193,7 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public Map<String, String> getListOfAvailableVehicleTypes() throws SQLException {
-		String selectSQL = "SELECT * from TYPE";
+		String selectSQL = SQLQUERYCONSTANTS.TYPE_SELECTION;
 		Map<String,String> finalValuesMap = new HashMap<String,String>();
 		PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(selectSQL);
 		ResultSet rs = preparedStatement.executeQuery();
@@ -193,16 +205,61 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public List<String> getFeatureList() throws SQLException {
+	public List<FeatureList> getFeatureList(String vid) throws SQLException {
 		List<String> featureList = new ArrayList<String>();
-		 String sqlFeatures = "select * from FEATURES";
+		List<String> featureListMapping = new ArrayList<String>();
+		 String sqlFeaturesMapping = SQLQUERYCONSTANTS.VEHICLE_MAPPING_SELECTION;
 		    
-		    PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(sqlFeatures);
-			ResultSet rsfeatures = preparedStatement.executeQuery();
-			while (rsfeatures.next()) {
-				String feature = rsfeatures.getString("FEATURE_NAME") +"~~"+ rsfeatures.getString("FID")+"~~"+ rsfeatures.getString("FEATURE_PRICE");	
-				featureList.add(feature);
+		 	PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement(sqlFeaturesMapping);
+			preparedStatement.setString(1, vid);
+			ResultSet rs = preparedStatement.executeQuery();
+			
+			while (rs.next()) {
+				String feature = rs.getString("FID");	
+				featureListMapping.add(feature);
 			}
-		return featureList;
+			
+			NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+			String sqlFeatures = SQLQUERYCONSTANTS.FEATURE_SELECTION;
+			Map<String, List<String>> fullMap = new HashMap<String, List<String>>();
+		    fullMap.put("fids", featureListMapping);
+	
+		    List<FeatureList> result = jdbcTemplate.query(sqlFeatures, fullMap, new FeatureMapper());
+		    
+			
+		return result;
+	}
+
+	@Override
+	public String reserveVehicleForCustomer(String cid, String vid, String startDate, String endDate,
+			double amountPerHour) throws SQLException {
+		
+		callStmt = dataSource.getConnection().prepareCall(SQLQUERYCONSTANTS.CAL_FULL_PRICE_JOURN);
+		callStmt.setDouble(2, amountPerHour);
+		callStmt.setString(3, startDate);
+		callStmt.setString(4, endDate);
+		callStmt.registerOutParameter(1, Types.NUMERIC);
+		callStmt.execute();
+
+		double results = callStmt.getFloat(1);
+		results = Double.parseDouble(new DecimalFormat("##.##").format(results));
+	
+		String keyCode = insertEntryTOResrvationsTable(cid,vid,startDate,endDate);
+
+		return String.valueOf(results)+"@@@"+keyCode;
+
+	}
+
+	private String insertEntryTOResrvationsTable(String cid, String vid, String startDate, String endDate) throws SQLException {
+		
+		callStmt = dataSource.getConnection().prepareCall(SQLQUERYCONSTANTS.INSERT_RESERV_ENTRY);
+		callStmt.setString(1, cid);
+		callStmt.setString(2, vid);
+		callStmt.setString(3, startDate);
+		callStmt.setString(4, endDate);
+		callStmt.registerOutParameter(5, Types.VARCHAR);
+		callStmt.execute();
+		
+		return callStmt.getString(5);
 	}
 }

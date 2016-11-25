@@ -49,7 +49,18 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<String> getFeatureList() throws SQLException {
-		return userDao.getFeatureList();
+	public List<FeatureList> getFeatureList(String vid) throws SQLException {
+		return userDao.getFeatureList(vid);
+	}
+
+	@Override
+	public double calculateFinalAmount(List<String> features, String typeID) throws SQLException {
+		return userDao.calculateFinalAmount(features, typeID);
+	}
+
+	@Override
+	public String reserveVehicleForCustomer(String cid, String vid, String startDate, String endDate,
+			double amountPerHour) throws SQLException {
+		return userDao.reserveVehicleForCustomer(cid,vid,startDate,endDate,amountPerHour );
 	}
 }

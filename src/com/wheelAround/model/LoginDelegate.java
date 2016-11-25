@@ -1,6 +1,7 @@
 package com.wheelAround.model;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,8 +47,18 @@ public class LoginDelegate
 	    return userService.getListOfAvailableVehicleTypes();
 	}
 	
-	public List<String> getFeatureList() throws SQLException
+	public List<FeatureList> getFeatureList(String vid) throws SQLException
 	{
-	    return userService.getFeatureList();
+	    return userService.getFeatureList(vid);
+	}
+	
+	public double calculateFinalAmount(List<String> fids, String typeId) throws SQLException
+	{
+	    return userService.calculateFinalAmount(fids, typeId);
+	}
+	
+	public String reserveVehicleForCustomer(String cid, String vid,String startDate,String endDate,double amountPerHour ) throws SQLException
+	{
+	    return userService.reserveVehicleForCustomer(cid,vid,startDate,endDate,amountPerHour );
 	}
 }

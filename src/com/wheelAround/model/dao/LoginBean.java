@@ -11,11 +11,24 @@ public class LoginBean {
 	private String username;
 	private String password;
 	private String cid;
+	private VehiclesListBean vlBean;
+	private double pricePerHour;
 	
-	
+	public double getPricePerHour() {
+		return pricePerHour;
+	}
+	public void setPricePerHour(double pricePerHour) {
+		this.pricePerHour = pricePerHour;
+	}
+	public VehiclesListBean getVlBean() {
+		return vlBean;
+	}
+	public void setVlBean(VehiclesListBean vlBean) {
+		this.vlBean = vlBean;
+	}
 	private String rid;
-	private Date startDate;
-	private Date endDate;
+	private String startDate;
+	private String endDate;
 	
 	public String getRid() {
 		return rid;
@@ -23,16 +36,16 @@ public class LoginBean {
 	public void setRid(String rid) {
 		this.rid = rid;
 	}
-	public Date getStartDate() {
+	public String getStartDate() {
 		return startDate;
 	}
-	public void setStartDate(Date startDate) {
+	public void setStartDate(String startDate) {
 		this.startDate = startDate;
 	}
-	public Date getEndDate() {
+	public String getEndDate() {
 		return endDate;
 	}
-	public void setEndDate(Date endDate) {
+	public void setEndDate(String endDate) {
 		this.endDate = endDate;
 	}
 	public String getCid() {
