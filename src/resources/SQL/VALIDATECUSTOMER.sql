@@ -27,7 +27,7 @@ for c in (SELECT CID INTO customerId
     end loop;
     
   if customerValidCount = 1 then
-    return 'Login successful!';
+    return customerId;
   else
     return 'Login Failed. Please try again.';
   end if;
