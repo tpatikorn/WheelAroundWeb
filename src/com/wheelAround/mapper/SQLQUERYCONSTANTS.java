@@ -14,6 +14,7 @@ public static final String CAL_FULL_PRICE_JOURN = "{?=call CALCULATE_FULL_PRICE_
 
 public static final String INSERT_RESERV_ENTRY = "{call INSERT_RESERV_ENTRY (?,?,?,?,?)}";
 
+public static final String INSERT_RATINGS = "{call INSERT_RATINGS (?,?,?,?,?)}";
 
 public static final String VEHICLE_SELECTION = "select * from VEHICLES where GARAGE_ID in (:garageIds) and TYPE_ID in (:typeIds)";
 
@@ -25,6 +26,10 @@ public static final String EUCLEDIAN_DIS_CAL = "SELECT g.garage_id, g.dist_in_km
 public static final String TYPE_SELECTION = "SELECT * from TYPE";
 
 public static final String VEHICLE_MAPPING_SELECTION = "select * from VEHICLE_FEATURE_MAPPING where VID  = ?";
+
+public static final String RATINGS_SELECTION = "select * from RATINGS where VID  = ?";
+
+public static final String RATINGS_SELECTION_FOR_UI = "select RATINGS.*, CUSTOMERS.FIRST_NAME, CUSTOMERS.LAST_NAME, CUSTOMERS.USERNAME from RATINGS inner join CUSTOMERS on RATINGS.CID = CUSTOMERS.CID where VID  = ?";
 
 public static final String FEATURE_SELECTION = "select * from FEATURES where FID in (:fids)";
 

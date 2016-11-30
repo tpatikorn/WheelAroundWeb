@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.wheelAround.model.FeatureList;
+import com.wheelAround.model.Ratings;
+import com.wheelAround.model.RatingsListBean;
 import com.wheelAround.model.VehicleTpeListBean;
 
 public interface UserDao {
@@ -18,6 +20,9 @@ public interface UserDao {
 	public double calculateFinalAmount(List<String> features, String typeID) throws SQLException;
 	public String reserveVehicleForCustomer(String cid, String vid, String startDate, String endDate,
 			double amountPerHour) throws SQLException;
+	public List<Ratings> getRatings(String vid) throws SQLException;
+	public List<RatingsListBean> getRatingsListBean(String vid) throws SQLException;
+	public String inserRatings(String vid, String cid, String rating, String comment, String rating_time) throws SQLException;
 	
 
 }

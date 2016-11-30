@@ -16,13 +16,18 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.wheelAround.mapper.FeatureMapper;
+import com.wheelAround.mapper.RatingsListBeanMapper;
+import com.wheelAround.mapper.RatingsMapper;
 import com.wheelAround.mapper.SQLQUERYCONSTANTS;
 import com.wheelAround.mapper.VehicleMapper;
 import com.wheelAround.model.FeatureList;
+import com.wheelAround.model.Ratings;
+import com.wheelAround.model.RatingsListBean;
 import com.wheelAround.model.VehicleTpeListBean;
 import com.wheelAround.model.Vehicles;
 import com.wheelAround.model.dao.RegistrationBean;
@@ -186,8 +191,7 @@ public class UserDaoImpl implements UserDao {
 			return results;
 		}else{
 			return null;
-		}		
-	
+		}
 	}
 
 
@@ -229,7 +233,29 @@ public class UserDaoImpl implements UserDao {
 			
 		return result;
 	}
-
+	
+	@Override
+	public List<Ratings> getRatings(String vid) throws SQLException {
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		String sqlRatings = SQLQUERYCONSTANTS.RATINGS_SELECTION;
+		List<Ratings> ratings = jdbcTemplate.query(sqlRatings, new Object[] {vid}, new RatingsMapper());
+		for(Ratings rating: ratings) {
+			System.out.println(rating.getRatingId());
+		}
+		return ratings;
+	}
+	
+	@Override
+	public List<RatingsListBean> getRatingsListBean(String vid) throws SQLException {
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		String sqlRatings = SQLQUERYCONSTANTS.RATINGS_SELECTION_FOR_UI;
+		List<RatingsListBean> ratings = jdbcTemplate.query(sqlRatings, new Object[] {vid}, new RatingsListBeanMapper());
+		for(RatingsListBean rating: ratings) {
+			System.out.println(rating.getRatingId());
+		}
+		return ratings;
+	}
+	
 	@Override
 	public String reserveVehicleForCustomer(String cid, String vid, String startDate, String endDate,
 			double amountPerHour) throws SQLException {
@@ -261,5 +287,18 @@ public class UserDaoImpl implements UserDao {
 		callStmt.execute();
 		
 		return callStmt.getString(5);
+	}
+
+	@Override
+	public String inserRatings(String vid, String rating, String cid, String rating_time, String comment)
+			throws SQLException {
+		callStmt = dataSource.getConnection().prepareCall(SQLQUERYCONSTANTS.INSERT_RATINGS);
+		callStmt.setString(1, vid);
+		callStmt.setString(2, rating);
+		callStmt.setString(3, cid);
+		callStmt.setString(4, rating_time);
+		callStmt.setString(5, comment);
+		callStmt.execute();
+		return "okay";
 	}
 }

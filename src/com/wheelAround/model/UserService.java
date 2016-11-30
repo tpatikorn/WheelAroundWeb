@@ -24,4 +24,11 @@ public interface UserService
 	public double calculateFinalAmount(List<String> fids,String typeID) throws SQLException;
 
 	public String reserveVehicleForCustomer(String cid, String vid, String startDate, String endDate, double amountPerHour) throws SQLException;
+
+	public List<Ratings> getRatings(String vid) throws SQLException;
+
+	public List<RatingsListBean> getRatingsListBean(String vid) throws SQLException;
+	
+	public String inserRatings(String vid, String rating, String cid, String rating_time, String comment)
+			throws SQLException;
 }

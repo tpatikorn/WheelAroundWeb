@@ -52,6 +52,16 @@ public class LoginDelegate
 	    return userService.getFeatureList(vid);
 	}
 	
+	public List<Ratings> getRatings(String vid) throws SQLException
+	{
+	    return userService.getRatings(vid);
+	}
+	
+	public List<RatingsListBean> getRatingsListBean(String vid) throws SQLException
+	{
+	    return userService.getRatingsListBean(vid);
+	}
+	
 	public double calculateFinalAmount(List<String> fids, String typeId) throws SQLException
 	{
 	    return userService.calculateFinalAmount(fids, typeId);
@@ -60,5 +70,10 @@ public class LoginDelegate
 	public String reserveVehicleForCustomer(String cid, String vid,String startDate,String endDate,double amountPerHour ) throws SQLException
 	{
 	    return userService.reserveVehicleForCustomer(cid,vid,startDate,endDate,amountPerHour );
+	}
+	
+	public String inserRatings(String vid, String rating, String cid, String rating_time, String comment)
+			throws SQLException {
+		return userService.inserRatings(vid, rating, cid, rating_time, comment);
 	}
 }

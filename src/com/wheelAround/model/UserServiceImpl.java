@@ -52,6 +52,12 @@ public class UserServiceImpl implements UserService {
 	public List<FeatureList> getFeatureList(String vid) throws SQLException {
 		return userDao.getFeatureList(vid);
 	}
+	
+	@Override
+	public List<Ratings> getRatings(String vid) throws SQLException {
+		return userDao.getRatings(vid);
+	}
+
 
 	@Override
 	public double calculateFinalAmount(List<String> features, String typeID) throws SQLException {
@@ -62,5 +68,16 @@ public class UserServiceImpl implements UserService {
 	public String reserveVehicleForCustomer(String cid, String vid, String startDate, String endDate,
 			double amountPerHour) throws SQLException {
 		return userDao.reserveVehicleForCustomer(cid,vid,startDate,endDate,amountPerHour );
+	}
+
+	@Override
+	public List<RatingsListBean> getRatingsListBean(String vid) throws SQLException {
+		return userDao.getRatingsListBean(vid);
+	}
+
+	@Override
+	public String inserRatings(String vid, String rating, String cid, String rating_time, String comment)
+			throws SQLException {
+		return userDao.inserRatings(vid, cid, rating, comment, rating_time);
 	}
 }
